@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <section id="wrap">
+        <h2 class="title">百度音乐榜单</h2>
+        <ul id="list">
+            <!-- <li>
+                    <input type="checkbox" />
+                    <span>第一条信息</span>
+                    <a href="javascript:;" class="collect">收藏</a>
+                    <a href="javascript:;" class="cancelCollect">取消收藏</a>
+                    <a href="javascript:;" class="remove">删除</a>
+                  </li> -->
+        </ul>
+        <footer class="footer">
+            <label><input type="checkbox" id="checkAll" />全选/全不选</label>
+            <a href="javascript:;" id="remove">删除</a>
+            <input type="text" id="newInfo" />
+            <a href="javascript:;" id="add">添加</a>
+        </footer>
+    </section>
+    <script>
+        let　musicData = [
+            {
+                id:0,
+                text:"关于南京的记忆　- 逼哥",
+                checked:false,
+                collect: true
+            },
+            {
+                id:1,
+                text:"关于南京的记忆　- 逼哥",
+                checked:false,
+                collect: true
+            },
+            {
+                id:2,
+                text:"关于郑州的记忆　- 逼哥",
+                checked:false,
+                collect: true
+            },
+            {
+                id:3,
+                text:"梵高先生- 逼哥",
+                checked:true,
+                collect: true
+            }
+        ]
+
+        let list = document.querySelector("#list");
+            let checkAll = document.querySelector("#checkAll");
+
+            // 根据数据渲染结构
+            let render = () => {
+                list.innerHTML = musicData.map(item => {
+                    return `
+                    <li>
+                       <input type="checkbox" ${item.checked?"checked":""} />
+                       <span>${item.text}</span>
+                       ${
+                    item.collect?
+                      '<a href="javascript:;" class="cancelCollect">取消收藏</a>'
+                      :
+                      '<a href="javascript:;" class="collect">收藏</a>'
+                  }
+                       <a href="javascript:;" class="remove">删除</a>
+                    </li>
+                    `;
+                }).join("");
+                // 全选
+                checkAll.checked = musicData.every(item=>item.checked);
+                //every some 它返回一个布尔值
+                //every 全真为真，返回true 有假返回false
+            };
+            render();
+
+            // 添加一条数据
+            let add = (text) =>{
+                musicData.push({
+                    id:Date.now(),  //不推荐使用时间戳，让后端处理
+                    text,
+                    checked:false
+                });
+                render()
+            };
+
+            // 
+            let newInfo = document.querySelector("#newInfo");
+            let addBtn = document.querySelector("#add");
+
+            addBtn.onclick = ()=>{
+                add(newInfo.value);
+            }
+            // 选中状态
+            let changChecked = (id,checked)=>{
+                musicData.forEach(item=>{
+                    if(item.id == id){
+                        item.checked = checked;
+                    }
+                });
+                render()
+            }
+
+            // 委托：利用事件冒泡，把事件放在父祖上进行处理
+            //删除数据
+            let remove = (id)=>{
+                musicData = musicData.filter(item=>item.id!=id);
+                render();
+            }
+            list.onclick = ({target}) =>{
+                console.log(target)
+                if(target.className == "remove"){
+                    console.log("qqqq")
+                    remove(target.parentNode.dataset.id);
+                    console.log("111")
+                }
+            }
+            //全选
+            let checkedAll = (checked)=>{
+                musicData.forEach((item)=>{
+                    item.checked = checked;
+                })
+                render()
+            }
+            checkAll.onchange = ()=>{
+                checkedAll(checkAll.checked);
+            }
+
+    </script>
+</body>
+</html>
